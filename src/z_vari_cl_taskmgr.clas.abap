@@ -117,13 +117,13 @@ METHOD task_end.
 *      invalid_db_operation  = 5
     OTHERS                = 6.
 
-  IF sy-subrc = 0.
-    log-msg = 'Ok'.
-  ELSE.
-    log-msg = msgtxt.
-  ENDIF.
-  log-task = p_task.
-  APPEND log TO me->log_t.
+*  IF sy-subrc = 0. "ToDo
+*    log-msg = 'Ok'.
+*  ELSE.
+*    log-msg = msgtxt.
+*  ENDIF.
+*  log-task = p_task.
+*  APPEND log TO me->log_t.
 
   APPEND LINES OF vari_out_t TO me->vari_out_all.
 
@@ -134,6 +134,8 @@ method WAIT_TO_END.
 
 *  WAIT UNTIL act_tasks = 0.
   WAIT FOR ASYNCHRONOUS TASKS UNTIL me->act_tasks = 0 UP TO 3 SECONDS.
+
+  SORT me->vari_out_all BY report variant selname.
 
 endmethod.
 ENDCLASS.

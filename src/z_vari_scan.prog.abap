@@ -1,5 +1,7 @@
 REPORT z_vari_scan.
 ********************************************************************************
+* See https://github.com/striezl/VariScan
+*
 * The MIT License (MIT)
 *
 * Copyright (c) 2020 VariScan Contributers
@@ -40,11 +42,15 @@ DATA: report     TYPE varid-report,
       lr_layout  TYPE REF TO cl_salv_layout.
 DATA: alv TYPE REF TO cl_salv_table.
 
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-b01.
 SELECT-OPTIONS: so_rep FOR report,
                 so_devcl FOR devclass.
-PARAMETERS: p_term(45),
-            p_tasks    TYPE int1 DEFAULT 5,
-            p_srvgrp   TYPE rfcgr.
+PARAMETERS: p_term(45) OBLIGATORY.
+SELECTION-SCREEN END OF BLOCK b1.
+SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-b02.
+PARAMETERS: p_tasks  TYPE int1 DEFAULT 5 OBLIGATORY,
+            p_srvgrp TYPE rfcgr.
+SELECTION-SCREEN END OF BLOCK b2.
 
 INITIALIZATION.
 
@@ -52,6 +58,8 @@ INITIALIZATION.
   IF sy-subrc IS NOT INITIAL.
     MESSAGE e000(z_vari).
   ENDIF.
+
+  "Default exclusions which have caused problems, e.g. dumps, might differ on various systems
   so_rep-option = 'EQ'.
   so_rep-sign = 'E'.
   so_rep-low = 'RCCARCH3'.
@@ -88,7 +96,7 @@ START-OF-SELECTION.
     CALL FUNCTION 'SAPGUI_PROGRESS_INDICATOR'
       EXPORTING
         percentage = percent
-        text       = |{ text-000 } { percent }%|.
+        text       = |{ TEXT-000 } { percent }%|.
 
     SELECT COUNT(*) FROM trdir
       INNER JOIN tadir ON tadir~object = 'PROG' AND trdir~name = tadir~obj_name
@@ -96,7 +104,7 @@ START-OF-SELECTION.
       AND subc = '1'
       AND uccheck  = 'X'
 *      AND ( rstat = 'K' OR rstat = 'P' )
-      AND rstat NE 'S'
+      AND rstat NE 'S' "Exclude System Programs
       AND devclass IN so_devcl.
     CHECK sy-subrc = 0.
 
@@ -117,10 +125,10 @@ START-OF-SELECTION.
 
   taskmgr->wait_to_end( ).
 
-  DATA log LIKE LINE OF taskmgr->log_t. "ToDo
-  LOOP AT taskmgr->log_t INTO log.
-    WRITE: / log-task, log-msg.
-  ENDLOOP.
+*  DATA log LIKE LINE OF taskmgr->log_t. "ToDo
+*  LOOP AT taskmgr->log_t INTO log.
+*    WRITE: / log-task, log-msg.
+*  ENDLOOP.
 
   cl_salv_table=>factory(
     IMPORTING

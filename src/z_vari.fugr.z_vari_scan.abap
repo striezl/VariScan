@@ -1,6 +1,6 @@
 FUNCTION z_vari_scan.
 *"----------------------------------------------------------------------
-*"*"Lokale Schnittstelle:
+*"*"Local Interface:
 *"  IMPORTING
 *"     VALUE(REPORT) TYPE  VARI_REPRT
 *"     VALUE(VARIANT) TYPE  VARIANT
@@ -12,10 +12,13 @@ FUNCTION z_vari_scan.
   DATA: t_field_info TYPE TABLE OF scr_info,
         valuetab     TYPE TABLE OF rsparams,
         values       LIKE LINE OF valuetab,
-        values1       LIKE LINE OF valuetab,
+        values1      LIKE LINE OF valuetab,
         match        TYPE flag,
 *        para LIKE LINE OF parameters,
-        vari_out LIKE LINE OF vari_out_t.
+        vari_out     LIKE LINE OF vari_out_t,
+        valuetab_l   TYPE TABLE OF rsparamsl,
+        values_l     LIKE LINE OF valuetab_l,
+        values_l1    LIKE values_l.
 
 **This is necessary to see if there is a selection screen or the program will dump
 *    CLEAR t_field_info.
@@ -48,7 +51,7 @@ FUNCTION z_vari_scan.
 *         L_SELOP              =
 *         L_SELOP_NONV         =
           valutab              = valuetab
-*         VALUTABL             =
+          valutabl             = valuetab_l
 *         OBJECTS              =
 *         FREE_SELECTIONS_DESC =
 *         FREE_SELECTIONS_VALUE       =
@@ -64,19 +67,41 @@ FUNCTION z_vari_scan.
   ENDTRY.
 *    ENDCATCH.
 
-  LOOP AT valuetab INTO values.
-    IF values-low CP searchterm OR values-high CP searchterm.
-      LOOP AT valuetab INTO values1
-        WHERE selname = values-selname.
-*        WRITE: / varid-report NO-GAP, `|` NO-GAP, varid-variant NO-GAP, `|` NO-GAP, values1-selname NO-GAP, `|` NO-GAP, values1-low NO-GAP, `|` NO-GAP, values1-high NO-GAP.
-        CLEAR vari_out.
-        MOVE-CORRESPONDING values1 TO vari_out.
-        vari_out-variant = variant.
-        vari_out-report = report.
-        APPEND vari_out TO vari_out_t.
-      ENDLOOP.
-      EXIT.
-    ENDIF.
+*  LOOP AT valuetab INTO values.
+*    IF values-low CP searchterm OR values-high CP searchterm.
+*      LOOP AT valuetab INTO values1
+*        WHERE selname = values-selname.
+**        WRITE: / varid-report NO-GAP, `|` NO-GAP, varid-variant NO-GAP, `|` NO-GAP, values1-selname NO-GAP, `|` NO-GAP, values1-low NO-GAP, `|` NO-GAP, values1-high NO-GAP.
+*        CLEAR vari_out.
+*        MOVE-CORRESPONDING values1 TO vari_out.
+*        vari_out-variant = variant.
+*        vari_out-report = report.
+*        APPEND vari_out TO vari_out_t.
+*      ENDLOOP.
+*      EXIT.
+*    ENDIF.
+*  ENDLOOP.
+
+*  LOOP AT valuetab_l INTO values_l.
+*    IF values_l-low CP searchterm OR values_l-high CP searchterm.
+*      LOOP AT valuetab_l INTO values_l1
+*        WHERE selname = values_l-selname.
+*        CLEAR vari_out.
+*        MOVE-CORRESPONDING values_l1 TO vari_out.
+*        vari_out-variant = variant.
+*        vari_out-report = report.
+*        APPEND vari_out TO vari_out_t.
+*      ENDLOOP.
+*    ENDIF.
+*  ENDLOOP.
+
+  LOOP AT valuetab_l INTO values_l
+    WHERE low CP searchterm OR high CP searchterm.
+    CLEAR vari_out.
+    MOVE-CORRESPONDING values_l TO vari_out.
+    vari_out-variant = variant.
+    vari_out-report = report.
+    APPEND vari_out TO vari_out_t.
   ENDLOOP.
 
 ENDFUNCTION.
