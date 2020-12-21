@@ -3,7 +3,7 @@
 Z_VARI_SCAN is supposed to be something like RS_ABAP_SOURCE_SCAN for program variants - so for example if you are doing some kind of refactoring and therefore want to find a certain value or pattern in all variants it could be your weapon of choice. Never again check variants manually!
 
 ## Sreenshots
-See [[wiki]](https://github.com/striezl/VariScan/wiki)
+See [wiki]]https://github.com/striezl/VariScan/wiki)
 
 ## Authorization
 
@@ -14,7 +14,7 @@ The program Z_VARI_SCAN checks for the following authorization:
 
 Note that SAP_ALL might need regenaration (transaction su21) due to the new authority object ZVARI that comes with installing VariScan.
 
-The Program Z_VARI_SCAN uses RFC function module Z_VARI_SCAN for parallel processing. Note that this FM does not have an implicit authority check. S_RFC should be set accordingly.
+The Program Z_VARI_SCAN uses RFC function module Z_VARI_SCAN for parallel processing. Note that this FM does not have an implicit authority check, S_RFC should be set accordingly.
 
 ## Constraints
 
