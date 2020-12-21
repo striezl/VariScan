@@ -7,7 +7,7 @@ See [[wiki]](https://github.com/striezl/VariScan/wiki)
 
 ## Authorization
 
-The program Z_VARI_SCAN checks for this authorization:
+The program Z_VARI_SCAN checks for the following authorization:
 * Object = ZVARI
 * Field = ZVARI
 * Field Value = X
