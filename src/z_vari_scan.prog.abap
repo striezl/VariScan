@@ -42,7 +42,11 @@ DATA: report     TYPE varid-report,
       lr_layout  TYPE REF TO cl_salv_layout,
       auth_badi  TYPE REF TO z_vari_auth,
       alv        TYPE REF TO cl_salv_table,
-      authorized TYPE flag.
+      authorized TYPE flag,
+      dynsel     TYPE string,
+      blacklist  TYPE flag.
+
+CONSTANTS: ablm_blacklist TYPE string VALUE 'ABLM_BLACKLIST'.
 
 SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-b01.
 SELECT-OPTIONS: so_rep FOR report,
@@ -87,11 +91,19 @@ START-OF-SELECTION.
     WHERE report IN so_rep
     ORDER BY report variant.
 
+  lines = lines( t_varid ).
+
   CREATE OBJECT taskmgr
     EXPORTING
       max_tasks = p_tasks.
 
-  lines = lines( t_varid ).
+
+  SELECT COUNT(*) FROM dd02l
+    WHERE tabname = 'ABLM_BLACKLIST'
+      AND tabclass = 'TRANSP'.
+  IF sy-subrc = 0.
+    blacklist = 'X'.
+  ENDIF.
 
   LOOP AT t_varid INTO varid.
 
@@ -106,18 +118,26 @@ START-OF-SELECTION.
     ENDIF.
 
     SELECT COUNT(*) FROM trdir
-      INNER JOIN tadir ON tadir~object = 'PROG' AND trdir~name = tadir~obj_name
+    INNER JOIN tadir ON tadir~object = 'PROG' AND trdir~name = tadir~obj_name
       WHERE name = varid-report
-      AND subc = '1'
-      AND uccheck  = 'X'
-*      AND ( rstat = 'K' OR rstat = 'P' )
-      AND rstat NE 'S' "Exclude System Programs
-      AND devclass IN so_devcl.
+        AND subc = '1'
+        AND uccheck  = 'X'
+*          AND ( rstat = 'K' OR rstat = 'P' )
+        AND rstat NE 'S' "Exclude System Programs
+        AND devclass IN so_devcl.
     CHECK sy-subrc = 0.
 
-    taskmgr->task_add( p_srvgrp ).
+    "This is to avoid dumps in S/4
+    IF blacklist IS NOT INITIAL.
+      dynsel = | EXECTYPE = 'PROG' AND EXECNAME = { report } |.
+      SELECT COUNT(*) FROM (ablm_blacklist)
+        WHERE (dynsel).
+      CHECK sy-subrc NE 0.
+    ENDIF.
 
+    taskmgr->task_add( p_srvgrp ).
     taskid = taskmgr->get_task_id( ).
+
     searchterm = p_term.
 
     CALL FUNCTION 'Z_VARI_SCAN'
