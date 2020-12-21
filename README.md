@@ -26,7 +26,7 @@ System programs (trdir-rstat = S) are out of scope.
 
 ### Dumps occur 
 
-To get the variant content, each examined program must be generated at runtime which can cause various errors.  Try to exclude programs / packages that cause dumps via selection in Z_VARI_SCAN. Try to find those programs by examining dumps in transaction st22.
+To get the variant content, each examined program must be generated at runtime which can cause various errors.  Try to exclude programs / packages that cause dumps via selection in Z_VARI_SCAN. Try to find those programs by examining dumps in transaction st22. At runtime each variant is checked in an exklusive tasks, so if one or more tasks fail (with runtime error) the overall reporting will still complete.
 
 ### Slow scan
 
