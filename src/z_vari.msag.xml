@@ -11,7 +11,7 @@
      <SPRSL>E</SPRSL>
      <ARBGB>Z_VARI</ARBGB>
      <MSGNR>000</MSGNR>
-     <TEXT>Authorization missing (authorization object ZVARI)</TEXT>
+     <TEXT>Authorization missing (authorization object ZVARI). SAP_ALL genarated?</TEXT>
     </T100>
    </T100>
    <I18N_LANGS>
@@ -27,7 +27,7 @@
     <item>
      <SPRSL>D</SPRSL>
      <MSGNR>000</MSGNR>
-     <TEXT>Berchtigung fehlt (Berechtiungsobjekt ZVARI)</TEXT>
+     <TEXT>Berchtigung fehlt (Berechtiungsobjekt ZVARI). SAP_ALL generiert?</TEXT>
     </item>
    </T100_TEXTS>
   </asx:values>

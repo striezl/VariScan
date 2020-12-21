@@ -39,8 +39,10 @@ DATA: report     TYPE varid-report,
       lr_columns TYPE REF TO cl_salv_columns_table,
       lr_display TYPE REF TO cl_salv_display_settings,
       l_lkey     TYPE        salv_s_layout_key,
-      lr_layout  TYPE REF TO cl_salv_layout.
-DATA: alv TYPE REF TO cl_salv_table.
+      lr_layout  TYPE REF TO cl_salv_layout,
+      auth_badi  TYPE REF TO z_vari_auth,
+      alv        TYPE REF TO cl_salv_table,
+      authorized TYPE flag.
 
 SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-b01.
 SELECT-OPTIONS: so_rep FOR report,
@@ -54,8 +56,12 @@ SELECTION-SCREEN END OF BLOCK b2.
 
 INITIALIZATION.
 
-  AUTHORITY-CHECK OBJECT 'ZVARI' ID 'ZVARI' FIELD 'X'.
-  IF sy-subrc IS NOT INITIAL.
+*  AUTHORITY-CHECK OBJECT 'ZVARI' ID 'ZVARI' FIELD 'X'.
+  GET BADI auth_badi.
+  CALL BADI auth_badi->check_authority
+    RECEIVING
+      ok = authorized.
+  IF authorized IS INITIAL.
     MESSAGE e000(z_vari).
   ENDIF.
 
