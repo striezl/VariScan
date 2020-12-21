@@ -20,7 +20,9 @@ The Program Z_VARI_SCAN uses RFC function module Z_VARI_SCAN for parallel proces
 
 ## Constraints
 
-System programs (trdir-rstat = S) are out of scope.
+System programs (trdir-rstat = S) are out of scope. 
+
+S/4: Blacklisted programs (see Table ABLM_BLACKLIST or SAP Note 2249880) will not be checked, even if execution is temporarily allowed.
 
 ## Troubleshooting
 
