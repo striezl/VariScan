@@ -14,7 +14,7 @@ The program Z_VARI_SCAN checks for the following authorization:
 
 Note that SAP_ALL might need regenaration (transaction su21) due to the new authority object ZVARI that comes with installing VariScan.
 
-You can program your own custom authority check by implementing BAdI Z_VARI_AUTH.
+You can program your own custom authority check by implementing BAdI Z_VARI_AUTH (use Enhancement Spot Z_VARI_AUTH in transaction se18).
 
 The Program Z_VARI_SCAN uses RFC function module Z_VARI_SCAN for parallel processing. Note that this FM does not have an implicit authority check, S_RFC should be set accordingly.
 
