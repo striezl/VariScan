@@ -91,12 +91,13 @@ START-OF-SELECTION.
 
     CLEAR: valuetab, match.
 
-    percent = 100 * sy-tabix / lines.
-
-    CALL FUNCTION 'SAPGUI_PROGRESS_INDICATOR'
-      EXPORTING
-        percentage = percent
-        text       = |{ TEXT-000 } { percent }%|.
+    IF sy-tabix MOD 10 = 0.
+      percent = 100 * sy-tabix / lines.
+      CALL FUNCTION 'SAPGUI_PROGRESS_INDICATOR'
+        EXPORTING
+          percentage = percent
+          text       = |{ TEXT-000 } { percent }%|.
+    ENDIF.
 
     SELECT COUNT(*) FROM trdir
       INNER JOIN tadir ON tadir~object = 'PROG' AND trdir~name = tadir~obj_name
