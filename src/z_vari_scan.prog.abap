@@ -25,9 +25,8 @@ REPORT z_vari_scan.
 * SOFTWARE.
 ********************************************************************************
 
-DATA: report     TYPE varid-report,
-      t_varid    TYPE TABLE OF varid,
-      varid      LIKE LINE OF t_varid,
+DATA: t_varid    TYPE TABLE OF varid,
+      s_varid      LIKE LINE OF t_varid,
       valuetab   TYPE TABLE OF rsparams,
       lines      TYPE i,
       percent    TYPE p DECIMALS 2,
@@ -49,7 +48,7 @@ DATA: report     TYPE varid-report,
 CONSTANTS: ablm_blacklist TYPE string VALUE 'ABLM_BLACKLIST'.
 
 SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-b01.
-SELECT-OPTIONS: so_rep FOR report,
+SELECT-OPTIONS: so_rep FOR s_varid-report,
                 so_devcl FOR devclass.
 PARAMETERS: p_term(45) OBLIGATORY.
 SELECTION-SCREEN END OF BLOCK b1.
@@ -97,7 +96,6 @@ START-OF-SELECTION.
     EXPORTING
       max_tasks = p_tasks.
 
-
   SELECT COUNT(*) FROM dd02l
     WHERE tabname = 'ABLM_BLACKLIST'
       AND tabclass = 'TRANSP'.
@@ -105,7 +103,7 @@ START-OF-SELECTION.
     blacklist = 'X'.
   ENDIF.
 
-  LOOP AT t_varid INTO varid.
+  LOOP AT t_varid INTO s_varid.
 
     CLEAR: valuetab, match.
 
@@ -119,7 +117,7 @@ START-OF-SELECTION.
 
     SELECT COUNT(*) FROM trdir
     INNER JOIN tadir ON tadir~object = 'PROG' AND trdir~name = tadir~obj_name
-      WHERE name = varid-report
+      WHERE name = s_varid-report
         AND subc = '1'
         AND uccheck  = 'X'
 *          AND ( rstat = 'K' OR rstat = 'P' )
@@ -129,7 +127,7 @@ START-OF-SELECTION.
 
     "This is to avoid dumps in S/4
     IF blacklist IS NOT INITIAL.
-      dynsel = | EXECTYPE = 'PROG' AND EXECNAME = { report } |.
+      dynsel = | EXECTYPE = 'PROG' AND EXECNAME = '{ s_varid-report }' |.
       SELECT COUNT(*) FROM (ablm_blacklist)
         WHERE (dynsel).
       CHECK sy-subrc NE 0.
@@ -144,8 +142,8 @@ START-OF-SELECTION.
       STARTING NEW TASK taskid
       CALLING taskmgr->task_end ON END OF TASK
       EXPORTING
-        report     = varid-report
-        variant    = varid-variant
+        report     = s_varid-report
+        variant    = s_varid-variant
         searchterm = searchterm.
 
   ENDLOOP.
