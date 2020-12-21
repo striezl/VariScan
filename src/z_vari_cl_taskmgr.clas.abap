@@ -27,8 +27,7 @@ protected section.
   data task_id type NUM8 .
 private section.
 
-  data GS_RPSSTATS type ZBC_RPSSTATS .
-ENDCLASS.
+  ENDCLASS.
 
 
 
@@ -98,9 +97,7 @@ ENDMETHOD.
 METHOD task_end.
 
   DATA: msgtxt(255),
-        valuetab    TYPE TABLE OF rsparams,
-        vari_out_t  TYPE zvari_out_t,
-        log         TYPE zvari_log.
+        vari_out_t  TYPE zvari_out_t.
 
   "Laufende prozessanzahl zurücksetzen
   SUBTRACT 1 FROM act_tasks .
