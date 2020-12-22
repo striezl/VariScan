@@ -5,6 +5,14 @@ Z_VARI_SCAN is supposed to be something like RS_ABAP_SOURCE_SCAN for program var
 ## Manual, Screenshots
 See [Wiki](https://github.com/striezl/VariScan/wiki).
 
+## Prerequisits
+
+Install [abapgit](https://docs.abapgit.org/guide-install.html) if you have not done so yet. 
+
+## Installation
+
+Clone the VariScan repo using abapgit. Create a package first, we recommend Z_VARI.
+
 ## Authorization
 
 The program Z_VARI_SCAN checks for the following authorization:
