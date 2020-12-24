@@ -1,4 +1,4 @@
-# VariScan is a fast search tool SAP program variants
+# VariScan is a fast search tool for SAP program variants
 
 Z_VARI_SCAN is supposed to be something like RS_ABAP_SOURCE_SCAN for program variants - so for example if you are doing some kind of refactoring and therefore want to find a certain value or pattern in all variants it could be your weapon of choice. Never again check variants manually!
 
