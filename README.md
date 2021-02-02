@@ -44,3 +44,9 @@ Normally the program should work quite fast of course depending on your database
  
  ## Warning
  *Beware of setting parameter "Max. number of tasks" too high, it might slow down the entire system!* Always make sure not to consume most of your available dialog process (see transaction sm50), maybe a rule of thumb for dev system might be half of them max., of course heavily depending on your individual setup. Set the parameter to "1" if you want the most conservative setup (at the price of a longer runtime).
+ 
+ ## Contribution
+Your [contribution](https://docs.abapgit.org/guide-contributing.html) is very welcome!
+
+## FAQ
+For questions/comments/bugs/feature requests/wishes please create an issue.
