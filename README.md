@@ -11,7 +11,7 @@ Install [abapgit](https://docs.abapgit.org/guide-install.html) if you have not d
 
 ## Installation
 
-Clone the VariScan repo using abapgit. Create a package first, we recommend Z_VARI.
+Clone the VariScan repo using [abapgit](https://github.com/abapGit/abapGit). Create a package first, we recommend Z_VARI.
 
 ## Authorization
 
