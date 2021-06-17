@@ -13,6 +13,12 @@
      <MSGNR>000</MSGNR>
      <TEXT>Authorization missing (authorization object ZVARI). SAP_ALL genarated?</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>Z_VARI</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Due to missing authorization not all programs could be checked</TEXT>
+    </T100>
    </T100>
    <I18N_LANGS>
     <LANGU>D</LANGU>
@@ -28,6 +34,11 @@
      <SPRSL>D</SPRSL>
      <MSGNR>000</MSGNR>
      <TEXT>Berchtigung fehlt (Berechtiungsobjekt ZVARI). SAP_ALL generiert?</TEXT>
+    </item>
+    <item>
+     <SPRSL>D</SPRSL>
+     <MSGNR>001</MSGNR>
+     <TEXT>Wegen fehlender Berechtigung konnten nicht alle Programme geprüft werden</TEXT>
     </item>
    </T100_TEXTS>
   </asx:values>

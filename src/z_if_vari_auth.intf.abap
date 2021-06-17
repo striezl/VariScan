@@ -6,5 +6,10 @@ interface Z_IF_VARI_AUTH
 
   methods CHECK_AUTHORITY
     returning
-      value(OK) type FLAG .
+      value(OK) type ABAP_BOOL .
+  methods CHECK_AUTHORITY_SECU
+    importing
+      value(SECU) type SECU
+    returning
+      value(OK) type ABAP_BOOL .
 endinterface.

@@ -25,25 +25,26 @@ REPORT z_vari_scan.
 * SOFTWARE.
 ********************************************************************************
 
-DATA: t_varid    TYPE TABLE OF varid,
+DATA: t_varid      TYPE TABLE OF varid,
       s_varid      LIKE LINE OF t_varid,
-      valuetab   TYPE TABLE OF rsparams,
-      lines      TYPE i,
-      percent    TYPE p DECIMALS 2,
-      match      TYPE flag,
-      devclass   TYPE tadir-devclass,
-      taskmgr    TYPE REF TO z_vari_cl_taskmgr,
-      searchterm TYPE string,
-      taskid     TYPE num8,
-      lr_columns TYPE REF TO cl_salv_columns_table,
-      lr_display TYPE REF TO cl_salv_display_settings,
-      l_lkey     TYPE        salv_s_layout_key,
-      lr_layout  TYPE REF TO cl_salv_layout,
-      auth_badi  TYPE REF TO z_vari_auth,
-      alv        TYPE REF TO cl_salv_table,
-      authorized TYPE flag,
-      dynsel     TYPE string,
-      blacklist  TYPE flag.
+      valuetab     TYPE TABLE OF rsparams,
+      lines        TYPE i,
+      percent      TYPE p DECIMALS 2,
+      match        TYPE flag,
+      devclass     TYPE tadir-devclass,
+      taskmgr      TYPE REF TO z_vari_cl_taskmgr,
+      searchterm   TYPE string,
+      taskid       TYPE num8,
+      columns      TYPE REF TO cl_salv_columns_table,
+      display      TYPE REF TO cl_salv_display_settings,
+      lkey         TYPE        salv_s_layout_key,
+      layout       TYPE REF TO cl_salv_layout,
+      auth_badi    TYPE REF TO z_vari_auth,
+      alv          TYPE REF TO cl_salv_table,
+      authorized   TYPE flag,
+      dynsel       TYPE string,
+      blacklist    TYPE flag,
+      auth_missing TYPE abap_bool.
 
 CONSTANTS: ablm_blacklist TYPE string VALUE 'ABLM_BLACKLIST'.
 
@@ -64,7 +65,7 @@ INITIALIZATION.
   CALL BADI auth_badi->check_authority
     RECEIVING
       ok = authorized.
-  IF authorized IS INITIAL.
+  IF authorized = abap_false.
     MESSAGE e000(z_vari).
   ENDIF.
 
@@ -84,6 +85,18 @@ INITIALIZATION.
   APPEND so_devcl.
 
 START-OF-SELECTION.
+
+*  SELECT devclass FROM tdevc
+*    INTO TABLE @DATA(t_devcl)
+*    WHERE devclass IN @so_devcl.
+*  LOOP AT t_devcl INTO data(devcl).
+*   AUTHORITY-CHECK OBJECT 'S_PROGRAM'
+*            ID 'P_GROUP' FIELD devcl
+*            ID 'P_ACTION' FIELD 'VARIANT'.
+*   IF sy-subrc <> 0.
+*     "
+*   ENDIF.
+*  ENDLOOP.
 
   SELECT * FROM varid
    INTO TABLE t_varid
@@ -115,8 +128,11 @@ START-OF-SELECTION.
           text       = |{ TEXT-000 } { percent }%|.
     ENDIF.
 
-    SELECT COUNT(*) FROM trdir
+    DATA secu TYPE trdir-secu.
+    CLEAR secu.
+    SELECT SINGLE secu FROM trdir
     INNER JOIN tadir ON tadir~object = 'PROG' AND trdir~name = tadir~obj_name
+      INTO secu
       WHERE name = s_varid-report
         AND subc = '1'
         AND uccheck  = 'X'
@@ -124,6 +140,15 @@ START-OF-SELECTION.
         AND rstat NE 'S' "Exclude System Programs
         AND devclass IN so_devcl.
     CHECK sy-subrc = 0.
+    CALL BADI auth_badi->check_authority_secu
+      EXPORTING
+        secu = secu
+      RECEIVING
+        ok   = authorized.
+    IF authorized = abap_false.
+      auth_missing = abap_true.
+      CONTINUE.
+    ENDIF.
 
     "This is to avoid dumps in S/4
     IF blacklist IS NOT INITIAL.
@@ -150,6 +175,10 @@ START-OF-SELECTION.
 
   taskmgr->wait_to_end( ).
 
+  IF auth_missing = abap_true.
+    MESSAGE s001(z_vari) DISPLAY LIKE 'W'.
+  ENDIF.
+
 *  DATA log LIKE LINE OF taskmgr->log_t. "ToDo
 *  LOOP AT taskmgr->log_t INTO log.
 *    WRITE: / log-task, log-msg.
@@ -167,16 +196,16 @@ START-OF-SELECTION.
     report = sy-repid
     set_functions = alv->c_functions_all ).
 
-  lr_columns ?= alv->get_columns( ).
-  lr_columns->set_optimize( abap_true ).
+  columns ?= alv->get_columns( ).
+  columns->set_optimize( abap_true ).
 
-  lr_display ?= alv->get_display_settings( ).
-  lr_display->set_striped_pattern( abap_true ).
+  display ?= alv->get_display_settings( ).
+  display->set_striped_pattern( abap_true ).
 
-  l_lkey-report = sy-repid.
-  lr_layout ?= alv->get_layout( ).
-  lr_layout->set_key( l_lkey ).
-  lr_layout->set_default( abap_true ).
-  lr_layout->set_save_restriction( ).
+  lkey-report = sy-repid.
+  layout ?= alv->get_layout( ).
+  layout->set_key( lkey ).
+  layout->set_default( abap_true ).
+  layout->set_save_restriction( ).
 
   alv->display( ).
