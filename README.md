@@ -15,14 +15,20 @@ Clone the VariScan repo using [abapgit](https://github.com/abapGit/abapGit). Cre
 
 ## Authorization
 
-The program Z_VARI_SCAN checks for the following authorization:
+*Variant 1*
+
+Per default, the program Z_VARI_SCAN checks for the following authorization at the INITIALIZATION event:
 * Object = ZVARI
 * Field = ZVARI
 * Field Value = X
 
 Note that SAP_ALL might need regenaration (transaction su21) due to the new authority object ZVARI that comes with installing VariScan.
 
-You can program your own custom authority check by implementing BAdI Z_VARI_AUTH (use Enhancement Spot Z_VARI_AUTH in transaction se18).
+*Variant 2*
+
+Alternatively you can choose to use the standard object S_PROGRAM (P_ACTION = "VARIANT", P_GROUP = \<TRDIR-SECU\>) for authority check. Therfore build an implementation in enhancement spot (se18) for BAdI Z_VARI_AUTH that is copied from the example implementation Z_VARI_AUTH_S_PROGRAM. The check for the custom object ZVARI will then be discarded. If you use S_PROGRAM each program (respectivly the authorization group of each program) will be checked seperately. If then at least one authority check fails, the message "Due to missing authorization not all programs could be checked" will be displayed.
+
+*In general*
 
 The Program Z_VARI_SCAN uses RFC function module Z_VARI_SCAN for parallel processing. Note that this FM does not have an implicit authority check, S_RFC should be set accordingly.
 
