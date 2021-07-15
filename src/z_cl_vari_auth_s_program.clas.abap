@@ -1,4 +1,4 @@
-class Z_VARI_AUTH_S_PROGRAM definition
+class Z_CL_VARI_AUTH_S_PROGRAM definition
   public
   final
   create public .
@@ -13,7 +13,7 @@ ENDCLASS.
 
 
 
-CLASS Z_VARI_AUTH_S_PROGRAM IMPLEMENTATION.
+CLASS Z_CL_VARI_AUTH_S_PROGRAM IMPLEMENTATION.
 
 
   method Z_IF_VARI_AUTH~CHECK_AUTHORITY.

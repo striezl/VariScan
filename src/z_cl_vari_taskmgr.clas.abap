@@ -1,4 +1,4 @@
-class Z_VARI_CL_TASKMGR definition
+class Z_CL_VARI_TASKMGR definition
   public
   create public .
 
@@ -31,7 +31,7 @@ private section.
 
 
 
-CLASS Z_VARI_CL_TASKMGR IMPLEMENTATION.
+CLASS Z_CL_VARI_TASKMGR IMPLEMENTATION.
 
 
 METHOD CONSTRUCTOR.
